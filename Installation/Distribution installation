@@ -1,0 +1,58 @@
+helm upgrade --install distribution --set distribution.joinKey=68ce170598791553f45e4211d5a5e97b \
+--set distribution.jfrogUrl=http://ip:8082 \
+--set distribution.masterKey=key \
+--set postgresql.postgresqlPassword=pwd \
+--namespace distribution jfrog/distribution
+
+
+# GPG
+## Upload Private and Public GPG keys in the distribution server.
+### Generate gpg key
+```
+gpg2 --gen-key
+yum install rng-tools -y
+systemctl start rngd
+gpg --list-secret-keys
+```
+### Create gpg.json
+body:
+{
+    "key": {
+        "public_key": "-----BEGIN PGP PUBLIC KEY BLOCK-----...-----END PGP PUBLIC KEY BLOCK-----",
+        "private_key": "-----BEGIN PGP PRIVATE KEY BLOCK-----...-----END PGP PRIVATE KEY BLOCK-----"
+    },
+    "propagate_to_edge_nodes": true,
+    "fail_on_propagation_failure": false,
+    "set_as_default": true
+}
+
+### Upload gpg.json to the distribution server by API
+```
+curl -uadmin:password -X POST  http://ip:8082/distribution/api/v1/keys/gpg -T gpg.json
+
+```
+
+## Propagate Public GPG key in Edge server.
+```
+curl -uadmin:pwd -X POST  http://distribution-ip:8082/distribution/api/v1/keys/gpg/propagate?all=true
+```
+You can find the gpg key is shown in the public keys on Edge's Artifactory ->Key management page.
+
+## Create a RB through the UI.
+
+## Distribute a release bundle.
+```
+cat distribute.json
+{
+  "dry_run": false,
+  "auto_create_missing_repositories": true,
+  "distribution_rules": [
+    {
+      "site_name": "*",
+      "city_name": "*",
+      "country_codes": ["*"]
+    }
+  ]
+}
+```
+curl -u admin:pwd -H "Content-Type: application/json" -X POST "http://distribution-ip:8082/distribution/api/v1/distribution/test/Copy_of_1" -T distribute.json
