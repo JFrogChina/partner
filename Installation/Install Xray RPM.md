@@ -1,7 +1,12 @@
 
 # Install Xray RPM
+## Prerequsite
+### Hardware
+- VM with 4Core, 4GB memory is a minimal requirement.
+- 200GB for postgres data directory.
+- Download Xray package, choose the ["Linux" type](https://releases.jfrog.io/artifactory/jfrog-xray/xray-linux/[RELEASE]/jfrog-xray-[RELEASE]-linux.tar.gz?_gl=1*1hw3bqo*_ga*MTk0Mjk0NDQ3Ni4xNzExNjEzNDUw*_ga_SQ1NR9VTFJ*MTcxMjEwOTI0Ny4xMC4xLjE3MTIxMDk4NTIuMC4wLjExNDk5ODc2MDA.*_fplc*JTJGZVhZSDRQd2l5YjJNYzc1TUtBcTlzMXpobzhVSERMazclMkZmQjYlMkZEVzNSVHZIMkpKJTJGNDZkVWFwUW5hM3ZYNmZEZktvOFF3Y3k5aTJDSFFYUHNwcktsR1hqd3NKME5qNGhrY3lhaEh3bGx5ZUZjbk0lM0Q.).
 
-## Step 0 check Artifactory yaml 
+### Check Artifactory system.yaml 
 ```
 configVersion: 1
 shared:
@@ -16,16 +21,14 @@ jfconnect:
     enabled: true
 ```
 
-## Optional: create a soft link in case the default installation fold(/var/opt/jfrog) is less than 5GB.
-ln -s /DATA/jfrog /opt/jfrog
 
-## Step 1 Installing PostgreSQL
+## Step 1 Installing PostgreSQL 13
 ```
 cd /root/jfrog-xray-3.69.3-rpm/third-party/postgresql
 yum localinstall -y postgresql13-libs-13.*-1PGDG.rhel7.x86_64.rpm postgresql13-server-13.*-1PGDG.rhel7.x86_64.rpm postgresql13-13.*-1PGDG.rhel7.x86_64.rpm
 
 ```
-### Change dir of database（Optional）
+### Change dir of PG database（Optional）
 Notice: The storage size of the database dir should be greater than 200GB.
 
 Create pg storage path：
@@ -89,7 +92,9 @@ xraydb=> \t
 ```
 
 
-## Step 2 install xray
+## Step 2 Install xray
+- Follow the [guide](https://jfrog.com/help/r/jfrog-installation-setup-documentation/install-xray-single-node-with-interactive-script-recommended)
+
 ```shell
 cd /root/jfrog-xray-3.80.9-rpm
 ./install.sh
@@ -163,6 +168,9 @@ How the trace the update?
 1. Find the update traceId，search "triggering" keyword in Xray console.logs, get the traceId
 2. Trace the log of this keyword.
 sudo tail -f /var/opt/jfrog/xray/log/console.log |grep 71026de85a4cc027 
+
+## Optional: Create a soft link for data folder in case the default installation folder(/var/opt/jfrog) is less than 5GB.
+ln -s /DATA/jfrog /opt/jfrog
 
 ## Enable curation
 ```shell
