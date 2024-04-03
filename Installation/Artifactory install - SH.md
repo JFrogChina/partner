@@ -8,9 +8,13 @@
 Follow the guide in this guide.
 https://jfrog.com/help/r/jfrog-installation-setup-documentation/installing-artifactory-edge?section=UUID-299554f8-c1f7-8541-8f25-a2c712ef6cf3_UUID-7c41de2a-9dc1-a82f-16fa-6d4d0066861e
 
-## Artifactory configuration(Centos)
-After the installation, modify the system.yaml for Artifactory.
+## Centos Artifactory configuration
+- After the installation, the installation path should be : /opt/jfrog/artifactory/.
+- Modify the system.yaml for Artifactory.
+```
 vi /opt/jfrog/artifactory/var/etc/system.yaml
+```
+
 ```
 ## @formatter:off
 ## JFROG ARTIFACTORY SYSTEM CONFIGURATION FILE
